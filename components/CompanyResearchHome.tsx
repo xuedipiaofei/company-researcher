@@ -19,6 +19,7 @@ import CrunchbaseDisplay from './crunchbase/CrunchbaseDisplay';
 import PitchBookDisplay from './pitchbook/PitchBookDisplay';
 import TracxnDisplay from "./tracxn/TracxnDisplay";
 import FoundersDisplay from "./founders/FoundersDisplay";
+import CompanyDetailsDisplay from "./companydetails/CompanyDetailsDisplay";
 import {
   LinkedInSkeleton,
   YouTubeSkeleton,
@@ -125,6 +126,8 @@ export default function CompanyResearcher() {
   const [tracxnData, setTracxnData] = useState<any>(null);
   const [founders, setFounders] = useState<Founder[] | null>(null);
   const [companyMap, setCompanyMap] = useState<CompanyMapData | null>(null);
+  const [companyDetails, setCompanyDetails] = useState<any>(null);
+  const [domain, setDomain] = useState<string>('');
 
   // Function to check if a string is a valid URL
   const isValidUrl = (url: string): boolean => {
@@ -752,10 +755,12 @@ export default function CompanyResearcher() {
       return;
     }
 
+    setDomain(domainName);
     setIsGenerating(true);
     setErrors({});
 
     // Reset all states to null
+    setCompanyDetails(null);
     setLinkedinData(null);
     setCompetitors(null);
     setNews(null);
@@ -847,7 +852,16 @@ export default function CompanyResearcher() {
 
         fetchFounders(domainName)
           .then((data) => setFounders(data))
-          .catch((error) => setErrors(prev => ({ ...prev, founders: error instanceof Error ? error.message : 'An error occurred with founders' })))
+          .catch((error) => setErrors(prev => ({ ...prev, founders: error instanceof Error ? error.message : 'An error occurred with founders' }))),
+
+        fetch('/api/fetchcompanydetails', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ domain: domainName }),
+        })
+          .then((res) => res.json())
+          .then((data) => setCompanyDetails(data.data))
+          .catch((error) => console.error('Company details error:', error))
       ];
 
       await Promise.allSettled(promises);
@@ -928,6 +942,12 @@ export default function CompanyResearcher() {
             ) : founders && founders.length > 0 && (
               <div className="opacity-0 animate-fade-up [animation-delay:200ms]">
                 <FoundersDisplay founders={founders} />
+              </div>
+            )}
+
+            {!isGenerating && linkedinData && domain && companyDetails && (
+              <div className="opacity-0 animate-fade-up [animation-delay:200ms]">
+                <CompanyDetailsDisplay domain={domain} />
               </div>
             )}
 
