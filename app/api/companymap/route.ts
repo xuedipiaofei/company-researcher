@@ -1,8 +1,13 @@
 // /app/api/companymap/route.ts
 import { NextRequest, NextResponse } from 'next/server';
-import { openai } from "@ai-sdk/openai";
+import { createOpenAI } from "@ai-sdk/openai";
 import { generateObject } from 'ai';
 import { z } from 'zod';
+
+const deepseek = createOpenAI({
+  apiKey: process.env.DEEPSEEK_API_KEY,
+  baseURL: 'https://api.deepseek.com/v1',
+});
 
 export const maxDuration = 100;
 
@@ -35,10 +40,7 @@ export async function POST(req: NextRequest) {
     });
 
     const { object } = await generateObject({
-      model: openai('deepseek-chat', {
-        apiKey: process.env.DEEPSEEK_API_KEY,
-        baseURL: 'https://api.deepseek.com'
-      }),
+      model: deepseek('deepseek-chat'),
       schema: mindMapSchema,
       output: 'object',
       system: "Create clear, concise mind maps that help users quickly understand companies. Use simple English and focus on the most important aspects.",
