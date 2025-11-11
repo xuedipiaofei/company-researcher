@@ -9,7 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@ai-sdk/anthropic": "^1.0.0",
+    "@ai-sdk/openai": "^0.0.31",
     "@babel/runtime": "^7.27.1",
     "@vercel/analytics": "^1.4.1",
     "ai": "^4.0.25",

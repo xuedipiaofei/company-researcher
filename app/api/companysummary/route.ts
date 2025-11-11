@@ -1,6 +1,6 @@
 // /app/api/companysummary/route.ts 
 import { NextRequest, NextResponse } from 'next/server';
-import { anthropic } from "@ai-sdk/anthropic";
+import { openai } from "@ai-sdk/openai";
 import { generateObject } from 'ai';
 import { z } from 'zod';
 
@@ -26,7 +26,10 @@ export async function POST(req: NextRequest) {
     });
 
     const { object } = await generateObject({
-      model: anthropic('claude-3-5-sonnet-20241022'),
+      model: openai('deepseek-chat', {
+        apiKey: process.env.DEEPSEEK_API_KEY,
+        baseURL: 'https://api.deepseek.com'
+      }),
       schema: summarySchema,
       output: 'object',
       system: "All the output content should be in simple english. Don't use any difficult words. Keep sentences short and simple.  Use unique emojis for each heading.",
