@@ -42,7 +42,6 @@ export async function POST(req: NextRequest) {
     const { object } = await generateObject({
       model: deepseek('deepseek-chat'),
       schema: mindMapSchema,
-      output: 'object',
       system: "Create clear, concise mind maps that help users quickly understand companies. Use simple English and focus on the most important aspects.",
       prompt: `You are an expert at creating insightful mind maps about companies.
       
